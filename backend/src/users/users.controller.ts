@@ -23,6 +23,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
 import { GetUser } from '../auth/get-user.decorator';
 import { FindUsersQueryDto } from './dto/find-users-query-dto';
+import { EnableUserDto } from './dto/enable-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -76,7 +77,7 @@ export class UsersController {
     };
   }
 
-  @Get()
+  @Get('/find-users')
   @Role(UserRole.ADMIN)
   async findUsers(@Query() query: FindUsersQueryDto) {
     const found = await this.usersService.findUsers(query);
@@ -85,4 +86,22 @@ export class UsersController {
       message: 'Usuários encontrados',
     };
   }
+
+  @Post('/enable-user')
+  @Role(UserRole.ADMIN)
+  async enableUser(
+    @Body(ValidationPipe) enableUserDto: EnableUserDto,
+    @GetUser() user: User,
+    @Param('id') id: string,
+  ) {
+    if (user.role != UserRole.ADMIN) {
+      throw new ForbiddenException(
+        'Você não tem autorização para acessar esse recurso',
+      );
+    } else {
+      return this.usersService.enableUser(enableUserDto, id);
+    }
+  }
+
+
 }

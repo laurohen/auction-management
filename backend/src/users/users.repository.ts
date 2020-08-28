@@ -13,6 +13,7 @@ import { FindUsersQueryDto } from './dto/find-users-query-dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  
   async findUsers(
     queryDto: FindUsersQueryDto,
   ): Promise<{ users: User[]; total: number }> {
@@ -97,4 +98,5 @@ export class UserRepository extends Repository<User> {
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
   }
+  
 }

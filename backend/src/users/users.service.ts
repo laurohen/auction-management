@@ -10,9 +10,11 @@ import { User } from './user.entity';
 import { UserRole } from './user-roles.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUsersQueryDto } from './dto/find-users-query-dto';
+import { EnableUserDto } from './dto/enable-user.dto';
 
 @Injectable()
 export class UsersService {
+  
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
@@ -61,4 +63,15 @@ export class UsersService {
     const users = await this.userRepository.findUsers(queryDto);
     return users;
   }
+
+  async enableUser(enableUserDto: EnableUserDto, id: string) {
+    const result = await this.userRepository.update({ id }, enableUserDto);
+    if (result.affected > 0) {
+      const user = await this.findUserById(id);
+      return user;
+    } else {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+  }
+
 }
